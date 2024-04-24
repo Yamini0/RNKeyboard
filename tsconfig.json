@@ -1,3 +1,31 @@
 {
-  "extends": "@react-native/typescript-config/tsconfig.json"
+  "extends": "@react-native/typescript-config/tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "./",
+    "module": "Node16",
+    "target": "es6",
+    "types": ["node"],
+    "strict": true,
+    "paths": {
+      "@components/*": ["./src/components/*"],
+      "@redux/*": ["./src/redux/*"],
+      "@navigation/*": ["./src/navigation/*"],
+      "@screens/*": ["./src/screens/*"],
+      "@typings/*": ["src/typings/*"],
+      "@services/*": ["src/services/*"],
+      "@utils/*": ["./src/utils/*"],
+    }
+  },
+  "typeAcquisition": {
+    "include": ["jest"]
+  },
+  "include": ["src/**/*", "global.d.ts", ".eslintrc.js"],
+  "exclude": [
+    "node_modules",
+    "babel.config.js",
+    "metro.config.js",
+    "react-native.config.js",
+    "jest.config.js",
+    "scripts/*"
+  ]
 }
