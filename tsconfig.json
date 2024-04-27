@@ -12,7 +12,6 @@
       "@navigation/*": ["./src/navigation/*"],
       "@screens/*": ["./src/screens/*"],
       "@typings/*": ["src/typings/*"],
-      "@services/*": ["src/services/*"],
       "@utils/*": ["./src/utils/*"],
     }
   },

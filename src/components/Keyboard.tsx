@@ -1,51 +1,58 @@
+import React, { useCallback } from 'react';
+import { useSelector } from 'react-redux';
+import { View, TouchableOpacity, Text, StyleSheet, Dimensions } from 'react-native';
+
 import { RootState } from '@redux/slices';
 import { KeyBoardType } from '@redux/slices/contants';
-import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { useSelector } from 'react-redux';
 
-interface KeyboardProps {
-  onKeyPress: (key: string) => void;
-  onToggleMode: () => void;
-  onToggleCapsLock: () => void;
-}
+import { alphabetKeys, deviceWidth, numericKeys } from '@utils/contants';
+import { KeyboardProps } from '@typings/keyboard.type';
 
 const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, onToggleMode, onToggleCapsLock }) => {
-  const alphabetKeys = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  const numericKeys = '1234567890';
-
   const keyBoardModes = useSelector((state: RootState) => state.keyBoardMode.keyBoardMode);
   const capsLockEnabled = useSelector((state: RootState) => state.capsLock.capsLockEnabled);
 
+  const isAlpabeticalKeyboard = keyBoardModes === KeyBoardType.alphabetical;
+
+  const handleDeletePress = useCallback(() => {
+    return onKeyPress('DEL');
+  }, []);
+
   const renderKeys = (keys: string) => {
-    return keys.split('').map((key, index) => (
-      <TouchableOpacity key={index} style={styles.key} onPress={() => onKeyPress(key)}>
-        {capsLockEnabled ? <Text>{key}</Text> : <Text>{key.toLowerCase()}</Text>}
-      </TouchableOpacity>
-    ));
+    return keys.split('').map((key, index) => {
+      return (
+        <TouchableOpacity
+          activeOpacity={0.3}
+          key={index}
+          style={styles.key}
+          onPress={() => onKeyPress(capsLockEnabled ? key : key.toLowerCase())}>
+          <Text style={styles.keyText}>{capsLockEnabled ? key : key.toLowerCase()}</Text>
+        </TouchableOpacity>
+      );
+    });
   };
 
   return (
     <View style={styles.container}>
-      {keyBoardModes === KeyBoardType.alphabetical ? (
-        <>
-          <View style={styles.row}>{renderKeys(alphabetKeys)}</View>
-          <View style={styles.row}>
-            <TouchableOpacity style={[styles.key, styles.specialKey]} onPress={() => onKeyPress('DEL')}>
-              <Text>DEL</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.key, styles.specialKey]} onPress={onToggleCapsLock}>
-              <Text>{capsLockEnabled ? 'CAPS' : 'caps'}</Text>
-            </TouchableOpacity>
-          </View>
-        </>
+      {isAlpabeticalKeyboard ? (
+        <View style={styles.row}>{renderKeys(alphabetKeys)}</View>
       ) : (
         <View style={styles.row}>{renderKeys(numericKeys)}</View>
       )}
-      <View style={styles.row}>
-        <TouchableOpacity style={[styles.key, styles.specialKey]} onPress={onToggleMode}>
-          <Text>Toggle</Text>
+      <View style={[styles.footerSpecialKey, { left: isAlpabeticalKeyboard ? deviceWidth / 4.2 : deviceWidth / 3 }]}>
+        <View style={styles.row}>
+          <TouchableOpacity style={[styles.key, styles.specialKey]} onPress={onToggleMode}>
+            <Text style={styles.specialKeyText}>Toggle</Text>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity style={[styles.key, styles.specialKey]} onPress={handleDeletePress}>
+          <Text style={styles.specialKeyText}>Delete</Text>
         </TouchableOpacity>
+        {isAlpabeticalKeyboard && (
+          <TouchableOpacity style={[styles.key, styles.specialKey]} onPress={onToggleCapsLock}>
+            <Text style={styles.specialKeyText}>{capsLockEnabled ? 'CAPS' : 'caps'}</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
@@ -56,25 +63,41 @@ export default Keyboard;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
     flexWrap: 'wrap',
-    // backgroundColor: '#0aa',
+    flexDirection: 'row',
+    backgroundColor: '#fff',
   },
   row: {
-    // flexDirection: 'row',
+    flexDirection: 'row',
     flexWrap: 'wrap',
-    // backgroundColor: '#00a',
+    justifyContent: 'center',
+  },
+  keyText: {
+    fontSize: 18,
+    fontWeight: 'semibold',
   },
   key: {
     padding: 4,
     margin: 5,
     height: 50,
     width: 50,
-    borderWidth: 1,
-    borderColor: 'black',
+    borderWidth: 0.8,
+    borderColor: '#DDD',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 6,
   },
   specialKey: {
-    backgroundColor: 'lightgray',
+    backgroundColor: '#DDD',
+    height: 50,
+    width: 63,
+  },
+  specialKeyText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  footerSpecialKey: {
+    flexDirection: 'row',
+    marginTop: 18,
   },
 });
