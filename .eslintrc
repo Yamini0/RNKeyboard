@@ -1,0 +1,28 @@
+{
+  "extends": "universe/native",
+  "plugins": ["import", "@typescript-eslint/eslint-plugin", "react-hooks"],
+  "root": true,
+  "rules": {
+    "react-hooks/rules-of-hooks": "warn",
+    "react-hooks/exhaustive-deps": "warn",
+    "no-console": "error",
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-unused-vars": "error",
+    "max-len": ["warn", 120],
+    "max-lines": ["warn", 300],
+    "id-length": ["error", { "min": 4, "properties": "never" }],
+    "import/order": [
+      "warn",
+      {
+        "alphabetize": {
+          "caseInsensitive": true,
+          "order": "asc"
+        },
+        "groups": [["builtin", "external"], "internal", "parent", "sibling", "index"],
+        "newlines-between": "always",
+        "pathGroups": [{ "group": "internal", "pattern": "@/**" }],
+        "pathGroupsExcludedImportTypes": []
+      }
+    ]
+  }
+}
